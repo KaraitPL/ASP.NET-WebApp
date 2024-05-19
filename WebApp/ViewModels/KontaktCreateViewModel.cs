@@ -6,6 +6,7 @@ namespace WebApp.ViewModels
     {
         public Kontakt Kontakt { get; set; }
         public List<Kategoria> WszystkieKategorie { get; set; }
+        public List<Podkategoria> WszystkiePodkategorie { get; set; }
 
 
     }

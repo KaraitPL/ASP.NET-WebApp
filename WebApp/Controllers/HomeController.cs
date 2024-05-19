@@ -52,7 +52,8 @@ namespace WebApp.Controllers
             KontaktCreateViewModel model = new KontaktCreateViewModel
             {
                 Kontakt = kontakt,
-                WszystkieKategorie = await _context.Kategoria.ToListAsync()
+                WszystkieKategorie = await _context.Kategoria.ToListAsync(),
+                WszystkiePodkategorie = await _context.Podkategoria.ToListAsync()
             };
 
             return View(model);

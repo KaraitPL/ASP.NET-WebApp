@@ -1,2 +1,32 @@
 ﻿<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
 <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+@*Jeżeli wybierzemy opcję "Inny"" to pojawi nam się pole do wprowadzenia naszeJ własnej podkategorii*@
+<script>
+    function checkOption(value) {
+        var inputField = document.getElementById('innyInput');
+        var podkategorie = document.getElementById('podkategorie');
+        if (value === 'Inny') {
+            inputField.style.display = 'inline';
+        } else {
+            inputField.style.display = 'none';
+        }
+
+        if (value === 'Sluzbowy') {
+            podkategorie.style.display = 'inline';
+        } else {
+            podkategorie.style.display = 'none';
+        }
+    }
+
+    document.getElementById('kategoria').addEventListener('change', function () {
+        var selectedOption = this.options[this.selectedIndex];
+        var inputField = document.getElementById('innyInput');
+        if (selectedOption.value != 'Inny') {
+            inputField.value = selectedOption.textContent;
+        }
+        else{
+            inputField.value = "";
+        }
+    });
+</script>
