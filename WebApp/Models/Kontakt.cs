@@ -1,4 +1,6 @@
-﻿namespace WebApp.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace WebApp.Models
 {
     public class Kontakt
     {
@@ -9,6 +11,7 @@
         public string Haslo { get; set; }
         public string Kategoria { get; set; }
         public long Telefon { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy}", ApplyFormatInEditMode = false)]
         public DateTime DataUrodzenia { get; set; }
 
         public Kontakt()

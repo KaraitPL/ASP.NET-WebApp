@@ -1,4 +1,4 @@
-﻿@model WebApp.Models.Kontakt
+﻿@model WebApp.ViewModels.KontaktCreateViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -10,43 +10,67 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form id="formularz" asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="Kontakt.Id" />
             <div class="form-group">
-                <label asp-for="Imie" class="control-label"></label>
-                <input asp-for="Imie" class="form-control" />
-                <span asp-validation-for="Imie" class="text-danger"></span>
+                <label asp-for="Kontakt.Imie" class="control-label"></label>
+                <input asp-for="Kontakt.Imie" class="form-control" />
+                <span asp-validation-for="Kontakt.Imie" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Nazwisko" class="control-label"></label>
-                <input asp-for="Nazwisko" class="form-control" />
-                <span asp-validation-for="Nazwisko" class="text-danger"></span>
+                <label asp-for="Kontakt.Nazwisko" class="control-label"></label>
+                <input asp-for="Kontakt.Nazwisko" class="form-control" />
+                <span asp-validation-for="Kontakt.Nazwisko" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
+                <label asp-for="Kontakt.Email" class="control-label"></label>
+                <input asp-for="Kontakt.Email" class="form-control" />
+                <span asp-validation-for="Kontakt.Email" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Haslo" class="control-label"></label>
-                <input asp-for="Haslo" class="form-control" />
-                <span asp-validation-for="Haslo" class="text-danger"></span>
+                <label asp-for="Kontakt.Haslo" class="control-label"></label>
+                <input asp-for="Kontakt.Haslo" class="form-control" />
+                <span asp-validation-for="Kontakt.Haslo" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Kategoria" class="control-label"></label>
-                <select asp-for="Kategoria" class="form-control"></select>
-                <span asp-validation-for="Kategoria" class="text-danger"></span>
+                <label asp-for="Kontakt.Kategoria" class="control-label"></label>
+                <select id="kategoria" class="form-control" onchange="checkOption(this.value)">
+                    @foreach (var kategoria in Model.WszystkieKategorie)
+                    {
+                        if (kategoria.Nazwa == "Inny")
+                        {
+                            <option value="@kategoria.Nazwa" id="innyOption">@kategoria.Nazwa</option>
+                        }
+                        else if (kategoria.Nazwa == "Sluzbowy")
+                        {
+                            <option value="@kategoria.Nazwa" id="sluzbowyOption">@kategoria.Nazwa</option>
+                        }
+                        else
+                        {
+                            <option value="@kategoria.Nazwa">@kategoria.Nazwa</option>
+                        }
+
+                    }
+                </select>
+            </div>
+            <select id="podkategorie" class="form-control" onchange="checkSubcategory(this.value)" style="display: inline;">
+                @foreach (var podkategoria in Model.WszystkiePodkategorie)
+                {
+                    <option value="@podkategoria.Nazwa">@podkategoria.Nazwa</option>
+                }
+            </select>
+            <input type="text" asp-for="Kontakt.Kategoria" id="innyInput" class="form-control" style="display: none;">
+            <span asp-validation-for="Kontakt.Kategoria" class="text-danger"></span>
+            <div class="form-group">
+                <label asp-for="Kontakt.Telefon" class="control-label"></label>
+                <input asp-for="Kontakt.Telefon" class="form-control" />
+                <span asp-validation-for="Kontakt.Telefon" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Telefon" class="control-label"></label>
-                <input asp-for="Telefon" class="form-control" />
-                <span asp-validation-for="Telefon" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DataUrodzenia" class="control-label"></label>
-                <input asp-for="DataUrodzenia" class="form-control" />
-                <span asp-validation-for="DataUrodzenia" class="text-danger"></span>
+                <label asp-for="Kontakt.DataUrodzenia" class="control-label"></label>
+                <input asp-for="Kontakt.DataUrodzenia" class="form-control" type="date" />
+                <span asp-validation-for="Kontakt.DataUrodzenia" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

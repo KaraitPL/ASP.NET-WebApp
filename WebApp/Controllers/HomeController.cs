@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using WebApp.Data;
@@ -44,6 +45,7 @@ namespace WebApp.Controllers
         }
 
         // GET: Home/Create
+        [Authorize]
         public async Task<IActionResult> Create()
         {
             Kontakt kontakt = new Kontakt();
@@ -68,15 +70,38 @@ namespace WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                kontakt.DataUrodzenia = kontakt.DataUrodzenia.Date;
-                _context.Add(kontakt);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                //Sprawdzenie czy email już istniej
+                if (IsEmailUnique(kontakt.Email))
+                {
+                    kontakt.DataUrodzenia = kontakt.DataUrodzenia.Date;
+                    _context.Add(kontakt);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                ModelState.AddModelError("Kontakt.Email", "Adres e-mail jest już zajęty.");
             }
-            return View(kontakt);
+
+            KontaktCreateViewModel model = new KontaktCreateViewModel
+            {
+                Kontakt = kontakt,
+                WszystkieKategorie = await _context.Kategoria.ToListAsync(),
+                WszystkiePodkategorie = await _context.Podkategoria.ToListAsync()
+            };
+            return View(model);
+        }
+
+        private bool IsEmailUnique(string email)
+        {
+            // Sprawdzenie czy istnieją jakiekolwiek kontakty w bazie danych
+            if (!_context.Kontakt.Any())
+            {
+                return true;
+            }
+            return !_context.Kontakt.Any(x => x.Email == email);
         }
 
         // GET: Home/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Kontakt == null)
@@ -89,7 +114,15 @@ namespace WebApp.Controllers
             {
                 return NotFound();
             }
-            return View(kontakt);
+            kontakt.DataUrodzenia = kontakt.DataUrodzenia;
+            KontaktCreateViewModel model = new KontaktCreateViewModel
+            {
+                Kontakt = kontakt,
+                WszystkieKategorie = await _context.Kategoria.ToListAsync(),
+                WszystkiePodkategorie = await _context.Podkategoria.ToListAsync()
+            };
+
+            return View(model);
         }
 
         // POST: Home/Edit/5
@@ -106,10 +139,22 @@ namespace WebApp.Controllers
 
             if (ModelState.IsValid)
             {
+                bool emailTaken = false;
+
+                kontakt.DataUrodzenia = kontakt.DataUrodzenia.Date;
                 try
                 {
-                    _context.Update(kontakt);
-                    await _context.SaveChangesAsync();
+                    if (IsEmailUnique(kontakt.Email))
+                    {
+                        _context.Update(kontakt);
+                        await _context.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        emailTaken = true;
+                        ModelState.AddModelError("Kontakt.Email", "Adres e-mail jest już zajęty.");
+                    }
+                        
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -122,12 +167,22 @@ namespace WebApp.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                if (emailTaken == false)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
             }
-            return View(kontakt);
+            KontaktCreateViewModel model = new KontaktCreateViewModel
+            {
+                Kontakt = kontakt,
+                WszystkieKategorie = await _context.Kategoria.ToListAsync(),
+                WszystkiePodkategorie = await _context.Podkategoria.ToListAsync()
+            };
+            return View(model);
         }
 
         // GET: Home/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Kontakt == null)
@@ -146,6 +201,7 @@ namespace WebApp.Controllers
         }
 
         // POST: Home/Delete/5
+        [Authorize]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

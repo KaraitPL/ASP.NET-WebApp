@@ -3,7 +3,7 @@
 
 @*Jeżeli wybierzemy opcję "Inny"" to pojawi nam się pole do wprowadzenia naszeJ własnej podkategorii*@
 <script>
-    window.wybranaKategoria = "Siema";
+    window.wybranaKategoria = "Służbowy - Szef";
 
     function checkOption(value) {
         var inputField = document.getElementById('innyInput');
@@ -28,20 +28,17 @@
     document.getElementById('kategoria').addEventListener('change', function () {
         var selectedOption = this.options[this.selectedIndex];
         var inputField = document.getElementById('innyInput');
-        if (selectedOption.value != 'Inny') {
-            inputField.value = selectedOption.textContent;
-        }
-        else{
-            inputField.value = "";
-        }
+        window.wybranaKategoria = selectedOption.textContent;
     });
 
     window.onload = function () {
-        window.wybranaKategoria = "Służbowy - Szef";     
+           
     }
 
     document.getElementById('formularz').addEventListener('submit', function (event) {
         var inputField = document.getElementById('innyInput');
-        inputField.value = window.wybranaKategoria;
+        if (window.wybranaKategoria != "Inny"){
+            inputField.value = window.wybranaKategoria;
+        }
     });
 </script>
